@@ -54,7 +54,7 @@ class Game:
         if self.game_is_over:
             print("The game is over")
             return
-        if row < 0 or row > 2 or col < 0 or col > 0:
+        if row < 0 or row > 2 or col < 0 or col > 2:
             print("Invalid row col")
             return
         if self.board[row][col] != ".":
@@ -77,8 +77,12 @@ class Game:
         self.check_for_game_over()
 
     def check_for_game_over(self):
-        # TODO 18: If the turn_counter is 9 then the game is over
+        # done 18: If the turn_counter is 9 then the game is over
         #      If >=9 update the game_is_over value and set the game_state_string to "Tie Game"
+        if self.turn_counter >= 9:
+            self.game_is_over = True
+            self.game_state_string = "Tie Game"
+
         lines = []
         lines.append(self.board[0][0] + self.board[0][1] + self.board[0][2])
         lines.append(self.board[1][0] + self.board[1][1] + self.board[1][2])
@@ -89,8 +93,15 @@ class Game:
         lines.append(self.board[0][0] + self.board[1][1] + self.board[2][2])
         lines.append(self.board[0][2] + self.board[1][1] + self.board[2][0])
 
-        # TODO 19: Use the lines list to determine if there is a winner.
+        # done 19: Use the lines list to determine if there is a winner.
         #    If there is a winner, update the game_state_string, play a sound, and set game_is_over to True.
+        for line in lines:
+            if line == "XXX" or line == "OOO":
+                self.game_is_over = True
+                pygame.mixer.music.play()
+                self.game_state_string = "X Wins!"
+                if line == "OOO":
+                    self.game_state_string = " O Wins!"
 
 
 # --------------------------- View Controller ---------------------------
@@ -112,14 +123,22 @@ class ViewController:
 
     def check_event(self, event):
         """ Takes actions as necessary based on the current event. """
-        # TODO 16: If the event is pygame.MOUSEBUTTONUP
+        # done 16: If the event is pygame.MOUSEBUTTONUP
         #     Get the mouse click position as x and y variables
         #     Convert the x and y variables into row and col using get_row_col
         #     Inform the model object about this event
-        # TODO 17: If the event is pygame.KEYDOWN
+        # done 17: If the event is pygame.KEYDOWN
         #     Get the pressed_keys
         #     If the key is pygame.K_SPACE, then reset the game.
-        pass
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            click_x, click_y = pygame.mouse.get_pos()
+            row, col = get_row_col(click_x,click_y)
+            self.game.take_turn(row,col)
+        if event.type == pygame.KEYDOWN:
+            press_keys = pygame.key.get_pressed()
+            if press_keys[pygame.K_SPACE]:
+                self.game = Game()
+
 
     def draw(self):
         """ Draw the board based on the marked store in the board configuration array """
@@ -127,7 +146,7 @@ class ViewController:
         # done 14: Use a nested loop (via range) to go over all marks of the game.board
         #    If the mark is "X", blit an X image at the x y position of row col
         #    If the mark is "O", blit an O image at the x y position of row col
-        # TODO 15: Update the display caption to be the game.game_state_string
+        # done 15: Update the display caption to be the game.game_state_string
         self.screen.blit(self.board_image,get_xy_position(0,0))
         for row in range(3):
             for col in range(3):
@@ -136,6 +155,7 @@ class ViewController:
                     self.screen.blit(self.x_image, get_xy_position(row, col))
                 if mark == "O":
                     self.screen.blit(self.o_image, get_xy_position(row, col))
+        pygame.display.set_caption(self.game.game_state_string)
 
 # --------------------------- Controller ---------------------------
 
@@ -147,17 +167,17 @@ def main():
     # done 1: Create an instance of the ViewController class called view_controller
     view_controller = ViewController(screen)
     # done 6: Write test code as needed to develop your model object.
-    print(view_controller.game)
-    view_controller.game.take_turn(1, 1)
-    print(view_controller.game)
-    view_controller.game.take_turn(0, 2)
-    print(view_controller.game)
-    view_controller.game.take_turn(0, 0)
-    print(view_controller.game)
-    view_controller.game.take_turn(1, 2)
-    print(view_controller.game)
-    view_controller.game.take_turn(2, 2)
-    print(view_controller.game)
+    # print(view_controller.game)
+    # view_controller.game.take_turn(1, 1)
+    # print(view_controller.game)
+    # view_controller.game.take_turn(0, 2)
+    # print(view_controller.game)
+    # view_controller.game.take_turn(0, 0)
+    # print(view_controller.game)
+    # view_controller.game.take_turn(1, 2)
+    # print(view_controller.game)
+    # view_controller.game.take_turn(2, 2)
+    # print(view_controller.game)
 
     while True:
         for event in pygame.event.get():

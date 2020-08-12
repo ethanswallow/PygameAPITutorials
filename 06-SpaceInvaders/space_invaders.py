@@ -31,6 +31,8 @@ class Fighter:
         self.image = pygame.image.load("fighter.png")
         self.image.set_colorkey((255,255,255))
         self.missiles = []
+        self.fire_sound = pygame.mixer.Sound("pew.wav")
+
 
     def draw(self):
         # Draw this Fighter, using its image at its current (x, y) position.
@@ -41,6 +43,7 @@ class Fighter:
         # Append that Missile to this Fighter's list of Missile objects.
         new_missile = Missile(self.screen, self.x + self.image.get_width() // 2)
         self.missiles.append(new_missile)
+        self.fire_sound.play()
 
     def remove_exploded_missiles(self):
         # Already complete
@@ -86,6 +89,7 @@ class EnemyFleet:
     def __init__(self, screen, enemy_rows):
         # Already done.  Prepares the list of Badguys.
         self.badguys = []
+        self.explosion_sound = pygame.mixer.Sound("explosion.wav")
         for j in range(enemy_rows):
             for k in range(8):
                 self.badguys.append(Badguy(screen, 80 * k, 50 * j + 20, enemy_rows))
@@ -110,6 +114,7 @@ class EnemyFleet:
         for k in range(len(self.badguys) - 1, -1, -1):
             if self.badguys[k].is_dead:
                 del self.badguys[k]
+                self.explosion_sound.play()
 
 class Scoreboard:
     def __init__(self, screen):
@@ -139,6 +144,9 @@ def main():
 
     game_over_image = pygame.image.load("gameover.png")
     scoreboard = Scoreboard(screen)
+
+    win_sound = pygame.mixer.Sound("win.wav")
+    lose_sound = pygame.mixer.Sound("lose.wav")
     while True:
         clock.tick(60)
         for event in pygame.event.get():
@@ -152,7 +160,7 @@ def main():
         screen.fill((0, 0, 0))
         fighter.draw()
         enemy_fleet.draw()
-
+        scoreboard.draw()
         if is_game_over:
             screen.blit(game_over_image, (170, 200))
             pygame.display.update()
@@ -206,6 +214,7 @@ def main():
         #     done 20: Increment the enemy_rows
         #     done 21: Create a new enemy_fleet with the screen and enemy_rows
         if enemy_fleet.is_defeated:
+            win_sound.play()
             enemy_rows += 1
             enemy_fleet = EnemyFleet(screen, enemy_rows)
 
@@ -217,15 +226,17 @@ def main():
         for badguy in enemy_fleet.badguys:
             if badguy.y > screen.get_height() - fighter.image.get_height() - badguy.image.get_height():
                 is_game_over = True
+                lose_sound.play()
 
         # done 23: Create a Scoreboard class (from scratch)
         # Hints: Instance variables: screen, score, and font (size 30)
         #    Methods: draw (and __init__)
         # Create a scoreboard and draw it at location 5, 5
         # When a Badguy is killed add 100 points to the scoreboard.score
-        scoreboard.draw()
 
-        # TODO 24: Optional extra - Add sound effects!
+
+        # done 24: Optional extra - Add sound effects!
+
 
         pygame.display.update()
 

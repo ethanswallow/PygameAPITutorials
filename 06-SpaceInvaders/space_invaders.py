@@ -78,7 +78,8 @@ class Badguy:
     def hit_by(self, missile):
         # Make a Badguy hitbox rect.
         # Return True if that hitbox collides with the xy point of the given missile.
-        pass
+        hitbox = pygame.Rect(self.x, self.y, self.image.get_width(), self.image.get_height())
+        return hitbox.collidepoint(missile.x, missile.y)
 
 
 class EnemyFleet:
@@ -159,14 +160,24 @@ def main():
             missile.move()
             missile.draw()
 
-        # TODO 12: For each badguy in the enemy_fleet.badguys list
-        #     TODO 13: For each missile in the fighter missiles
-        #         TODO 14: If the badguy is hit by the missile
-        #             TODO 15: Mark the badguy is_dead = True
-        #             TODO 16: Mark the missile has_exploded = True
+        # done 12: For each badguy in the enemy_fleet.badguys list
+        #     done 13: For each missile in the fighter missiles
+        #         done 14: If the badguy is hit by the missile
+        #             done 15: Mark the badguy is_dead = True
+        #             done 16: Mark the missile has_exploded = True
 
-        # TODO 17: Use the fighter to remove exploded missiles
-        # TODO 18: Use the enemy_fleet to remove dead badguys
+        for badguy in enemy_fleet.badguys:
+            for missile in fighter.missiles:
+                if badguy.hit_by(missile):
+                    badguy.is_dead = True
+                    missile.has_exploded = True
+
+
+        # done 17: Use the fighter to remove exploded missiles
+        # done 18: Use the enemy_fleet to remove dead badguys
+
+        fighter.remove_exploded_missiles()
+        enemy_fleet.remove_dead_badguys()
 
         # TODO 19: If the enemy is_defeated
         #     TODO 20: Increment the enemy_rows

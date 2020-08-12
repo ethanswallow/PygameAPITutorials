@@ -118,6 +118,7 @@ def main():
     pygame.display.set_caption("SPACE INVADERS!")
     screen = pygame.display.set_mode((640, 650))
 
+    is_game_over = False
     # done 9: Set    enemy_rows    to an initial value of 3.
     # done 10: Create an EnemyFleet object (called enemy_fleet) with the screen and enemy_rows
     enemy_rows = 3
@@ -126,6 +127,7 @@ def main():
     # done 1: Create a Fighter (called fighter) at location  320, 590
     fighter = Fighter(screen,screen.get_width() // 2, screen.get_height() - 60)
 
+    game_over_image = pygame.image.load("gameover.png")
     while True:
         clock.tick(60)
         for event in pygame.event.get():
@@ -137,6 +139,15 @@ def main():
                 sys.exit()
 
         screen.fill((0, 0, 0))
+        fighter.draw()
+        enemy_fleet.draw()
+
+        if is_game_over:
+            screen.blit(game_over_image, (170, 200))
+            pygame.display.update()
+            continue
+
+
         pressed_keys = pygame.key.get_pressed()
         # done 3: If pygame.K_LEFT is pressed and fighter.x is greater than -50 move the fighter left 5
         # done 4: If pygame.K_RIGHT is pressed and fighter.x is less than 590 move the fighter right 5
@@ -146,11 +157,11 @@ def main():
             fighter.x += 5
 
         # done 2: Draw the fighter
-        fighter.draw()
+
         # done 11: Move the enemy_fleet
         # done 12: Draw the enemy_fleet
         enemy_fleet.move()
-        enemy_fleet.draw()
+
 
 
         # done 6: For each missile in the fighter missiles
@@ -191,6 +202,9 @@ def main():
         # Hints: Check if a Badguy gets a y value greater than 545
         #    If that happens set a variable (game_over) as appropriate
         #    If the game is over, show the gameover.png image at (170, 200)
+        for badguy in enemy_fleet.badguys:
+            if badguy.y > screen.get_height() - fighter.image.get_height() - badguy.image.get_height():
+                is_game_over = True
 
         # TODO 23: Create a Scoreboard class (from scratch)
         # Hints: Instance variables: screen, score, and font (size 30)

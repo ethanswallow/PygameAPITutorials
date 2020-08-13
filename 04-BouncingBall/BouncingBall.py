@@ -11,21 +11,21 @@ class Ball:
         self.x = x
         self.y = y
         self.radius = random.randint(5,20)
-        self.speed_x = random.randint(1,10)
-        self.speed_y = random.randint(1,10)
+        self.speed_x = random.randint(1,5)
+        self.speed_y = random.randint(1,5)
+        self.game = True
 
     def draw(self):
-        pygame.draw.circle(self.screen, self.color,(5,5),self.radius,self.radius)
+        pygame.draw.circle(self.screen, self.color,(self.x,self.y),self.radius,self.radius)
 
     def move(self):
-        if self.x > self.screen.get_width():
-            self.x += self.speed_x
-        else:
-            self.x -= self.speed_x
-        if self.y > self.screen.get_height():
-            self.y += self.speed_y
-        else:
-            self.y -= self.speed_y
+        self.x += self.speed_x
+        self.y += self.speed_y
+        if self.x > 290 or self.x < 10:
+            self.speed_x = -self.speed_x
+        if self.y > 290 or self.y < 10:
+            self.speed_y = -self.speed_y
+
 # done: Create a Ball class.
 # done: Possible member variables: screen, color, x, y, radius, speed_x, speed_y
 # done: Methods: __init__, draw, move
@@ -39,7 +39,7 @@ def main():
     clock = pygame.time.Clock()
 
     # done: Create an instance of the Ball class called ball1
-    ball1 = Ball(screen,pygame.Color('red'),200, 100)
+    ball1 = Ball(screen,pygame.Color('red'),100, 100)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
